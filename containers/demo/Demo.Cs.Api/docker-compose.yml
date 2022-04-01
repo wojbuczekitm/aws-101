@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  demo.cs.api:
+    image: ${DOCKER_REGISTRY-}democsapi
+    build:
+      context: .
+      dockerfile: Dockerfile
