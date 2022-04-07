@@ -1,0 +1,153 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "4.8.0"
+    }
+  }
+
+  required_version = ">= 0.14.9"
+}
+
+provider "aws" {
+  profile = "default"
+  region  = var.region
+}
+
+resource "aws_ecs_cluster" "single_cluster" {
+  name = "${var.resource_prefix}-cluster"
+}
+
+
+resource "aws_ecs_task_definition" "single_task_definition" {
+  family                   = "${var.resource_prefix}-task-definition"
+  container_definitions    = <<DEFINITION
+[
+    {
+        "image": "${var.repository_url}",
+        "name": "${var.resource_prefix}-container",
+        "essential": true,
+        "cpu": 256,
+        "memory" : 512,
+        "entryPoint": [],
+        "network_mode": "awsvpc",
+        "environment": [
+            {
+            "name": "ASPNETCORE_ENVIRONMENT",
+            "value": "${var.ASPNETCORE_ENVIRONMENT}"
+            }
+        ],
+        "portMappings": [
+            {
+            "hostPort": ${var.http_host_port},
+            "protocol": "tcp",
+            "containerPort": ${var.http_container_port}
+            },
+            {
+            "hostPort": ${var.https_host_port},
+            "protocol": "tcp",
+            "containerPort": ${var.https_container_port}
+            }
+        ]
+
+    }
+]
+                DEFINITION
+  requires_compatibilities = ["EC2"]
+  memory                   = 512
+  cpu                      = 256
+  network_mode             = "awsvpc"
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
+  task_role_arn            = aws_iam_role.ecsTaskExecutionRole.arn
+
+}
+
+
+resource "aws_security_group" "service-sg" {
+  name   = "${var.resource_prefix}-service-sg"
+  vpc_id = var.vpc_id
+
+  ingress {
+    from_port = 80
+    to_port   = 80
+    protocol  = "-1"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_ecs_service" "service" {
+  name            = "${var.resource_prefix}-service"
+  cluster         = aws_ecs_cluster.single_cluster.id
+  task_definition = aws_ecs_task_definition.single_task_definition.arn
+  desired_count   = 1
+  launch_type     = "EC2"
+
+  network_configuration {
+    subnets          = var.subnets
+    security_groups  = [aws_security_group.service-sg.id]
+    assign_public_ip = false
+  }
+}
+
+
+resource "aws_iam_role" "ecsTaskExecutionRole" {
+  name               = "${var.resource_prefix}-execution-task-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
+  role       = aws_iam_role.ecsTaskExecutionRole.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+
+resource "aws_iam_role_policy" "iam_role_policy" {
+  name   = "${var.resource_prefix}-iam-role-policy"
+  role   = aws_iam_role.ecsTaskExecutionRole.id
+  policy = <<EOF
+{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:CreateCluster",
+        "ecs:DeregisterContainerInstance",
+        "ecs:DiscoverPollEndpoint",
+        "ecs:Poll",
+        "ecs:RegisterContainerInstance",
+        "ecs:StartTelemetrySession",
+        "ecs:Submit*",
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecs:StartTask"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_instance_profile" "profile" {
+  name = "${var.resource_prefix}-profile"
+  role = aws_iam_role.ecsTaskExecutionRole.name
+}

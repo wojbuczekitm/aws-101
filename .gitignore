@@ -4,3 +4,10 @@
 #Visual Studio files
 bin/
 obj/
+**/.terraform
+**/*.hcl
+**/*.v2
+**/*.tfstate
+**/*.tfstate*
+ttt.txt
+**/.vs
