@@ -1,6 +1,6 @@
 terraform_state = {
-  bucket = "wb-code-bucket"
-  key    = "tf/terraform.tfstate"
+  # bucket = "wb-code-bucket"
+  # key    = "tf/terraform.tfstate"
 }
 
 namespace = "wb"
