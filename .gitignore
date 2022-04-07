@@ -11,3 +11,4 @@ obj/
 **/*.tfstate*
 ttt.txt
 **/.vs
+.vscode
