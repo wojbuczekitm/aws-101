@@ -13,21 +13,6 @@ env:
 phases:
   install:
     commands:
-      - echo Install Terraform...
-      - "cd /usr/bin"
-      - "curl -s -qL -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
-      - "unzip -o terraform.zip"
-
-      - echo Terraform installed.
-      
-      - echo Terraform init...
-      
-      - cd "$CODEBUILD_SRC_DIR"
-      - cd "$SRC_DIR"
-      - terraform init -input=false --backend-config=../env_vars/${TF_ENV}.conf
-      - terraform ${TF_ACTION} -input=false -var-file=../env_vars/${TF_ENV}.tfvars -auto-approve
-      - echo "Terraform init completed on `date`"
-
       - echo Install or check docker...
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 & timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       - echo Docker ready.
@@ -45,9 +30,9 @@ phases:
 
   post_build:
     commands:
-      - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+      - echo Build completed on `date`
 
 artifacts:
   files:
