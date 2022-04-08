@@ -25,9 +25,10 @@ phases:
       - echo "Terraform completed on `date`"
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-  
+      
   build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR"
       - echo Build started on `date`
       - echo Building the Docker image...          
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG ./containers/demo/Demo.Cs.Api
