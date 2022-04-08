@@ -13,6 +13,16 @@ variable "amis" {
   }
 }
 
+variable "bucket" {
+  default = "wb-code-bucket"
+  type    = string
+}
+
+variable "bucket_key" {
+  default = "tf/terraform.tfstate"
+  type    = string
+}
+
 variable "region" {
   default = "eu-central-1"
   type    = string
