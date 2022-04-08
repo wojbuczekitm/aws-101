@@ -6,11 +6,7 @@ terraform {
     }
   }
 
-  backend "s3" {
-    region = var.region
-    bucket = var.bucket
-    key    = var.bucket_key
-  }
+  backend "s3" {}
   required_version = ">= 0.14.9"
 }
 
