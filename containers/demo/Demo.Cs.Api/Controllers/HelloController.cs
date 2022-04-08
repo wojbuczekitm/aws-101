@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 public class HelloController : ControllerBase
 {
     [HttpGet("{name?}")]
-    public string Get([FromRoute] string? name=null)
+    public string Get([FromRoute] string? name = null)
     {
-        return $"Hello {name ?? "World"}";
+        return $"Hello {name ?? "World!"}";
     }
 }
