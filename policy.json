@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": ["iam:*", "application-autoscaling:*", "s3:*", "ecs:*", "ec2:*", "elasticloadbalancing:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VisualEditor1",
+      "Effect": "Allow",
+      "Action": "ecr:*",
+      "Resource": "arn:aws:ecr:*:836906079004:repository/*"
+    },
+    {
+      "Sid": "VisualEditor2",
+      "Effect": "Allow",
+      "Action": "codebuild:*",
+      "Resource": "arn:aws:codebuild:*:836906079004:report-group/wb-build-*"
+    },
+    {
+      "Sid": "VisualEditor3",
+      "Effect": "Allow",
+      "Action": "logs:*",
+      "Resource": "*"
+    }
+  ]
+}
