@@ -2,9 +2,6 @@ version: 0.2
 
 env:
   variables:
-    TF_VERSION: "1.1.7"
-    SRC_DIR: "infra/repo_with_lb"
-    TF_ENV: "main"
     AWS_DEFAULT_REGION: "eu-central-1"
     AWS_ACCOUNT_ID: "836906079004"
     IMAGE_REPO_NAME: "wb-repository"
