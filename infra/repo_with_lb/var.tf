@@ -33,6 +33,11 @@ variable "ASPNETCORE_ENVIRONMENT" {
   type    = string
 }
 
+variable "ASPNETCORE_URLS" {
+  default = "https://+:443"
+  type    = string
+}
+
 variable "cert_arn" {
   default = "arn:aws:acm:eu-central-1:836906079004:certificate/db49f142-bfe8-4713-a74a-4ef22a5dda72"
 }

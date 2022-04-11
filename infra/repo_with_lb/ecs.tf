@@ -6,13 +6,15 @@ data "template_file" "app" {
   template = file("./templates/image.json")
 
   vars = {
-    app_image      = "${aws_ecr_repository.repository.repository_url}:latest"
-    container_name = "${var.resource_prefix}-container"
-    containerPort  = "${var.https_container_port}"
-    hostPort       = "${var.https_host_port}"
-    cpu            = "${var.cpu}"
-    memory         = "${var.memory}"
-    region         = var.region
+    app_image              = "${aws_ecr_repository.repository.repository_url}:latest"
+    container_name         = "${var.resource_prefix}-container"
+    containerPort          = "${var.https_container_port}"
+    hostPort               = "${var.https_host_port}"
+    cpu                    = "${var.cpu}"
+    memory                 = "${var.memory}"
+    region                 = var.region,
+    ASPNETCORE_ENVIRONMENT = var.ASPNETCORE_ENVIRONMENT,
+    ASPNETCORE_URLS        = var.ASPNETCORE_URLS
   }
 }
 
