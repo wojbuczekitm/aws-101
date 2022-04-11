@@ -29,7 +29,7 @@ variable "region" {
 }
 
 variable "ASPNETCORE_ENVIRONMENT" {
-  default = "Development"
+  default = "Production"
   type    = string
 }
 
