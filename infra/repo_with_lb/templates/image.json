@@ -21,7 +21,7 @@
       }
     ],
     "environment": [
-      {"name": "ASPNETCORE_ENVIRONMENT", "value": "${ASPNETCORE_ENVIRONMENT}"}
+      {"name": "ASPNETCORE_ENVIRONMENT", "value": "${ASPNETCORE_ENVIRONMENT}"},
       {"name": "ASPNETCORE_URLS", "value": "${ASPNETCORE_URLS}"}
     ],
   }
