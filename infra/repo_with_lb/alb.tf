@@ -6,22 +6,49 @@ resource "aws_alb" "alb" {
   security_groups = [aws_security_group.alb-sg.id]
 }
 
-resource "aws_alb_listener" "redirect_to_https" {
-  load_balancer_arn = aws_alb.alb.arn
-  port              = "80"
-  protocol          = "HTTP"
+# resource "aws_alb_listener" "redirect_to_https" {
+#   load_balancer_arn = aws_alb.alb.arn
+#   port              = "80"
+#   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
+#   default_action {
+#     type = "redirect"
 
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
+
+resource "aws_alb_target_group" "alb-tg-http" {
+  name        = "${var.resource_prefix}-tg-http"
+  port        = var.http_host_port
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.vpc_id
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    protocol            = "HTTP"
+    matcher             = "200"
+    path                = var.health_check_path
+    interval            = 30
   }
 }
 
+resource "aws_alb_listener" "alb_listener_http" {
+  load_balancer_arn = aws_alb.alb.id
+  port              = var.http_host_port
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.alb-tg-http.arn
+  }
+}
 resource "aws_alb_target_group" "alb-tg-https" {
   name        = "${var.resource_prefix}-tg-https"
   port        = var.https_host_port

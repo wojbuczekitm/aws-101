@@ -34,8 +34,9 @@ variable "ASPNETCORE_ENVIRONMENT" {
 }
 
 variable "ASPNETCORE_URLS" {
-  default = "https://+:443"
-  type    = string
+  default = "http://+:80"
+  # default = "https://+:443;http://+:80"
+  type = string
 }
 
 variable "cert_arn" {

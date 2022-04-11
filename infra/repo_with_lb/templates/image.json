@@ -18,6 +18,10 @@
       {
         "containerPort": ${containerPort},
         "hostPort": ${hostPort}
+      },
+      {
+        "containerPort": ${containerPortHttps},
+        "hostPort": ${hostPortHttps}
       }
     ],
     "environment": [

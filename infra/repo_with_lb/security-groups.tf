@@ -36,6 +36,12 @@ resource "aws_security_group" "ecs_sg" {
     to_port         = var.https_container_port
     security_groups = [aws_security_group.alb-sg.id]
   }
+  ingress {
+    protocol        = "tcp"
+    from_port       = var.http_host_port
+    to_port         = var.http_container_port
+    security_groups = [aws_security_group.alb-sg.id]
+  }
 
   egress {
     protocol    = "-1"

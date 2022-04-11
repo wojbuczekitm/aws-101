@@ -8,8 +8,10 @@ data "template_file" "app" {
   vars = {
     app_image              = "${aws_ecr_repository.repository.repository_url}:latest"
     container_name         = "${var.resource_prefix}-container"
-    containerPort          = "${var.https_container_port}"
-    hostPort               = "${var.https_host_port}"
+    containerPort          = "${var.http_container_port}"
+    hostPort               = "${var.http_host_port}"
+    containerPortHttps     = "${var.https_container_port}"
+    hostPortHttps          = "${var.https_host_port}"
     cpu                    = "${var.cpu}"
     memory                 = "${var.memory}"
     region                 = var.region,
@@ -43,10 +45,10 @@ resource "aws_ecs_service" "service" {
   }
 
   load_balancer {
-    target_group_arn = aws_alb_target_group.alb-tg-https.arn
+    target_group_arn = aws_alb_target_group.alb-tg-http.arn
     container_name   = "${var.resource_prefix}-container"
-    container_port   = var.https_host_port
+    container_port   = var.http_host_port
   }
 
-  depends_on = [aws_alb_listener.alb_listener_https, aws_alb_listener.redirect_to_https, aws_iam_role_policy_attachment.ecs_task_execution_role]
+  depends_on = [aws_alb_listener.alb_listener_https, aws_alb_listener.alb_listener_http, aws_iam_role_policy_attachment.ecs_task_execution_role]
 }
