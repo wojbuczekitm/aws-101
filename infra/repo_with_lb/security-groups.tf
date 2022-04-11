@@ -7,11 +7,16 @@ resource "aws_security_group" "alb-sg" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = var.http_host_port
-    to_port     = var.http_container_port
+    from_port   = 80
+    to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     protocol    = "-1"
     from_port   = 0
@@ -27,8 +32,8 @@ resource "aws_security_group" "ecs_sg" {
 
   ingress {
     protocol        = "tcp"
-    from_port       = var.http_host_port
-    to_port         = var.http_container_port
+    from_port       = var.https_host_port
+    to_port         = var.https_container_port
     security_groups = [aws_security_group.alb-sg.id]
   }
 

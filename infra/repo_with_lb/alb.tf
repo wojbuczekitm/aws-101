@@ -6,10 +6,26 @@ resource "aws_alb" "alb" {
   security_groups = [aws_security_group.alb-sg.id]
 }
 
-resource "aws_alb_target_group" "alb-tg" {
-  name        = "${var.resource_prefix}-tg"
-  port        = var.http_host_port
-  protocol    = "HTTP"
+resource "aws_alb_listener" "redirect_to_https" {
+  load_balancer_arn = aws_alb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+resource "aws_alb_target_group" "alb-tg-https" {
+  name        = "${var.resource_prefix}-tg-https"
+  port        = var.https_host_port
+  protocol    = "HTTPS"
   target_type = "ip"
   vpc_id      = var.vpc_id
 
@@ -17,22 +33,21 @@ resource "aws_alb_target_group" "alb-tg" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    protocol            = "HTTP"
+    protocol            = "HTTPS"
     matcher             = "200"
     path                = var.health_check_path
     interval            = 30
   }
 }
 
-resource "aws_alb_listener" "alb_listener" {
+resource "aws_alb_listener" "alb_listener_https" {
   load_balancer_arn = aws_alb.alb.id
-  port              = var.http_host_port
-  protocol          = "HTTP"
-  #ssl_policy        = "ELBSecurityPolicy-2016-08"
-  #certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
-  #enable above 2 if you are using HTTPS listner and change protocal from HTTPS to HTTPS
+  port              = var.https_host_port
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = var.cert_arn
   default_action {
     type             = "forward"
-    target_group_arn = aws_alb_target_group.alb-tg.arn
+    target_group_arn = aws_alb_target_group.alb-tg-https.arn
   }
 }

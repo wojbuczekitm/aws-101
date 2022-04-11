@@ -33,6 +33,10 @@ variable "ASPNETCORE_ENVIRONMENT" {
   type    = string
 }
 
+variable "cert_arn" {
+  default = "arn:aws:acm:eu-central-1:836906079004:certificate/db49f142-bfe8-4713-a74a-4ef22a5dda72"
+}
+
 variable "http_host_port" {
   default = 80
   type    = number
