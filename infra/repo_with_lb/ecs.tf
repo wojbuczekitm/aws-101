@@ -50,5 +50,5 @@ resource "aws_ecs_service" "service" {
     container_port   = var.http_host_port
   }
 
-  depends_on = [aws_alb_listener.alb_listener_https, aws_alb_listener.alb_listener_http, aws_iam_role_policy_attachment.ecs_task_execution_role]
+  depends_on = [aws_alb_listener.alb_listener_http, aws_iam_role_policy_attachment.ecs_task_execution_role]
 }

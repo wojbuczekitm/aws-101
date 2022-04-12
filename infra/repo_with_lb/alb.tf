@@ -49,32 +49,32 @@ resource "aws_alb_listener" "alb_listener_http" {
     target_group_arn = aws_alb_target_group.alb-tg-http.arn
   }
 }
-resource "aws_alb_target_group" "alb-tg-https" {
-  name        = "${var.resource_prefix}-tg-https"
-  port        = var.https_host_port
-  protocol    = "HTTPS"
-  target_type = "ip"
-  vpc_id      = var.vpc_id
+# resource "aws_alb_target_group" "alb-tg-https" {
+#   name        = "${var.resource_prefix}-tg-https"
+#   port        = var.https_host_port
+#   protocol    = "HTTPS"
+#   target_type = "ip"
+#   vpc_id      = var.vpc_id
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 3
-    protocol            = "HTTPS"
-    matcher             = "200"
-    path                = var.health_check_path
-    interval            = 30
-  }
-}
+#   health_check {
+#     healthy_threshold   = 2
+#     unhealthy_threshold = 2
+#     timeout             = 3
+#     protocol            = "HTTPS"
+#     matcher             = "200"
+#     path                = var.health_check_path
+#     interval            = 30
+#   }
+# }
 
-resource "aws_alb_listener" "alb_listener_https" {
-  load_balancer_arn = aws_alb.alb.id
-  port              = var.https_host_port
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.cert_arn
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.alb-tg-https.arn
-  }
-}
+# resource "aws_alb_listener" "alb_listener_https" {
+#   load_balancer_arn = aws_alb.alb.id
+#   port              = var.https_host_port
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-2016-08"
+#   certificate_arn   = var.cert_arn
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_alb_target_group.alb-tg-https.arn
+#   }
+# }
