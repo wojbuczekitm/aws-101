@@ -4,7 +4,15 @@
     {
       "Sid": "VisualEditor0",
       "Effect": "Allow",
-      "Action": ["iam:*", "application-autoscaling:*", "s3:*", "ecs:*", "ec2:*", "elasticloadbalancing:*"],
+      "Action": [
+        "iam:*",
+        "application-autoscaling:*",
+        "autoscaling:*",
+        "s3:*",
+        "ecs:*",
+        "ec2:*",
+        "elasticloadbalancing:*"
+      ],
       "Resource": "*"
     },
     {

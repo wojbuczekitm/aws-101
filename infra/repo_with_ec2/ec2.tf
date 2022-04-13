@@ -4,11 +4,13 @@ resource "aws_ecs_cluster" "cluster" {
 
 
 resource "aws_launch_configuration" "ecs_launch_config" {
-  image_id                    = var.amis
-  iam_instance_profile        = aws_iam_instance_profile.ecs_agent.name
-  security_groups             = [aws_security_group.ecs_sg.id]
-  user_data                   = "#!/bin/bash\n echo ECS_CLUSTER=${aws_ecs_cluster.cluster.name} >> /etc/ecs/ecs.config"
-  instance_type               = var.instance_type
+  image_id             = var.amis
+  iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
+  security_groups      = [aws_security_group.ecs_sg.id]
+  name_prefix          = var.resource_prefix
+  user_data            = "#!/bin/bash\n echo ECS_CLUSTER=${aws_ecs_cluster.cluster.name} >> /etc/ecs/ecs.config"
+  instance_type        = var.instance_type
+
   associate_public_ip_address = true
 }
 
@@ -26,8 +28,8 @@ resource "aws_autoscaling_group" "asg" {
 
 resource "aws_ecs_task_definition" "service" {
   family             = "${var.resource_prefix}-definition"
-  cpu                = "1vcpu"
-  memory             = "512"
+  cpu                = var.cpu
+  memory             = var.memory
   execution_role_arn = aws_iam_role.ecsTaskExecutionRole.arn
   task_role_arn      = aws_iam_role.ecsTaskExecutionRole.arn
 
@@ -35,8 +37,8 @@ resource "aws_ecs_task_definition" "service" {
     {
       name      = "${var.resource_prefix}-container"
       image     = "${aws_ecr_repository.repository.repository_url}:latest"
-      cpu       = 1
-      memory    = 512
+      cpu       = "${var.cpu}"
+      memory    = "${var.memory}"
       essential = true
       portMappings = [
         {
