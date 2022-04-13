@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     TF_VERSION: "1.1.7"
-    SRC_DIR: "infra/repo_with_lb"
+    SRC_DIR: "infra/repo_with_ec2"
     TF_ENV: "main"
 
 phases:
